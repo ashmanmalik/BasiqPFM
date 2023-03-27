@@ -88,7 +88,7 @@ export default function Home() {
             </div>
           )}
         </div>
-        <PlanetIllustrations hiddenOnMobile={false} />
+        <PlanetIllustrations />
       </main>
     </div>
   );

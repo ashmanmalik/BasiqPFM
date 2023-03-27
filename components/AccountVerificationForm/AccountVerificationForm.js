@@ -62,7 +62,7 @@ export function AccountVerificationForm() {
         onConfirm={cancel}
         cancelling={cancelling}
       />
-      <PlanetIllustrations hiddenOnMobile={true} />
+      <PlanetIllustrations />
     </div>
   );
 }

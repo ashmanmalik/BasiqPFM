@@ -38,7 +38,7 @@ export function ActiveShapePieChart({ data }) {
   }
 
   return (
-    <ResponsiveContainer width={'100%'} aspect={1.5} minWidth={370}>
+    <ResponsiveContainer width={'100%'} aspect={1.35} minWidth={370}>
       <PieChart width={100} height={100}>
         <Pie
           activeIndex={activeIndex}

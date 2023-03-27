@@ -20,7 +20,7 @@ export default async function transactions(req, res) {
         },
         
       }
-    ); 
+    );
     res.status(200).json(data.data);
   } catch (error) {
     res.status(400).json({ message: error.message });
