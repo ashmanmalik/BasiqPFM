@@ -35,6 +35,7 @@ const AccountVerificationFormContext = createContext({
   // Function to redirect user to Basiq Consent UI
   goToConsent: undefined,
   createBasiqConnection: undefined,
+  refreshBasiqConnection: undefined,
 });
 
 // This custom hook gives components access the `AccountVerificationFormContext` form context
@@ -63,7 +64,7 @@ export function AccountVerificationFormProvider({ children }) {
   const goForward = () => setCurrentStep(step => (step === totalSteps - 1 ? totalSteps - 1 : currentStep + 1));
 
   // State for managing the basiq connection
-  const { basiqConnection, createBasiqConnection, deleteBasiqConnection } = useBasiqConnection({
+  const { basiqConnection, createBasiqConnection, refreshBasiqConnection, deleteBasiqConnection } = useBasiqConnection({
     currentStep,
     userId: accountVerificationFormState.user?.id,
     selectedInstitution: accountVerificationFormState.selectedInstitution,
@@ -162,6 +163,7 @@ export function AccountVerificationFormProvider({ children }) {
     getUserConsent,
     basiqConnection,
     createBasiqConnection,
+    refreshBasiqConnection,
     reset: resetState,
     resetForNewAccount: resetStateForNewAccount,
     hasCompletedForm,
@@ -213,6 +215,18 @@ function useBasiqConnection({ currentStep, userId }) {
     // Optimisic UI. We know the first job basiq will process will always be "verify-credentials"
     setStepNameInProgress('verify-credentials');
     setJobId(newJobId);
+  }
+
+  async function refreshBasiqConnection(userId) {
+    if (!userId) {
+      return;
+    }
+
+    const response = await refreshConnection(userId);
+    if (response.status === 200) {
+      resetState();
+      setJobId(response?.data?.data[0]?.id);
+    }
   }
 
   // If we have a basiq connection, check the status every 2 seconds
@@ -331,6 +345,7 @@ function useBasiqConnection({ currentStep, userId }) {
     getUserConsent,
     deleteBasiqConnection,
     createBasiqConnection,
+    refreshBasiqConnection,
   };
 }
 
@@ -369,5 +384,10 @@ async function deleteUser({ userId }) {
 // https://api.basiq.io/reference/retrieve-a-job
 export async function checkConnectionStatus({ jobId }) {
   const response = await axios.get(`https://au-api.basiq.io/jobs/${jobId}`);
+  return response;
+}
+
+export async function refreshConnection(userId) {
+  const response = await axios.post(`/api/refresh-connection?userId=${userId}`);
   return response;
 }

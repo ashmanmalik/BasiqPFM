@@ -15,7 +15,7 @@ export function AccountVerificationFormStep3LoadingSteps() {
   const [transactionLoadingDispatched, setTransactionLoadingDispatched] = useState(false);
 
   useDispatch(userTransactionsLoading());
-  const { isCompleted, refreshConnectionError } = useSelector(state => state.userTransactions);
+  const { isCompleted, transactionsError } = useSelector(state => state.userTransactions);
   const { basiqConnection, finish } = useAccountVerificationForm();
   const { error, progress, completed, stepNameInProgress, reset, setJobId } = basiqConnection;
 
@@ -25,7 +25,7 @@ export function AccountVerificationFormStep3LoadingSteps() {
 
   let userTransactionsRequestSuccessful = isCompleted && transactionLoadingDispatched;
 
-  let userTransactionsRequestError = refreshConnectionError && transactionLoadingDispatched;
+  let userTransactionsRequestError = transactionsError && transactionLoadingDispatched;
 
   const errorOrNoData = error || !data || data.length === 0;
 

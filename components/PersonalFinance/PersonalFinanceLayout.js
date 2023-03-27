@@ -11,6 +11,7 @@ import { TransactionPage } from './Transaction';
 import { HomeSlider, Expenditures } from './Slider';
 import { AccountPage } from './Account';
 import { IncomeExpensePage } from './IncomeExpense';
+import { useAccountVerificationForm } from '../AccountVerificationForm/AccountVerificationFormProvider';
 
 const homePageIndex = 1;
 const accountPageIndex = 2;
@@ -40,6 +41,8 @@ export function PersonalFinanceLayout() {
   const [hideHomePageItems, setHideHomePageItems] = useState(false);
   const [hideTransactionPageItems, setHideTransactionPageItems] = useState(false);
   const [hideIncomeExpensePageItems, setHideIncomeExpensePageItems] = useState(false);
+  const [refreshConnectionApiCalled, setRefreshConnectionApiCalled] = useState(false);
+  const [incomeExpenseApiCalled, setIncomeExpenseApiCalled] = useState(false);
 
   //Monthly sum of payments in categories
   const [expenseMonthlyData, setExpenseMonthlyData] = useState([]);
@@ -60,15 +63,18 @@ export function PersonalFinanceLayout() {
   const [expenseLoading, setExpenseLoading] = useState(true);
   const [incomeLoading, setIncomeLoading] = useState(true);
 
+  const { refreshBasiqConnection, basiqConnection } = useAccountVerificationForm();
+  const { completed } = basiqConnection;
+
   let { dateGroupedTransactions } = useSelector(state => state.userTransactions);
 
-  function setIncomeExpenseData() {
-    const userId = sessionStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
 
+  async function setIncomeExpenseData() {
     //Before creating income & expense summary, creating or refreshing the relevant connections is required
     //Creating expense summary between 2020-01 - 2021-01
     axios
-      .post(`/api/create-expense?userId=${userId}`, { fromMonth: '2020-01', toMonth: '2020-12' })
+      .post(`/api/create-expense?userId=${userId}`, { fromMonth: '2022-03', toMonth: '2023-02' })
       .then(function (response) {
         const data = response.data;
         const paymentsTotal = data.payments.reduce((sum, p) => {
@@ -138,7 +144,7 @@ export function PersonalFinanceLayout() {
 
     //Creating income summary between 2020-01 - 2021-01
     axios
-      .post(`/api/create-income?userId=${userId}`, { fromMonth: '2020-01', toMonth: '2020-12' })
+      .post(`/api/create-income?userId=${userId}`, { fromMonth: '2022-03', toMonth: '2023-02' })
       .then(function (response) {
         const data = response.data;
 
@@ -177,11 +183,27 @@ export function PersonalFinanceLayout() {
         setIncomeData([]);
         setIncomeLoading(false);
       });
+
+      setIncomeExpenseApiCalled(true);
   }
 
   useEffect(() => {
-    if (dateGroupedTransactions?.length) setIncomeExpenseData();
+    const refreshConnectionFunc = async () => {
+      await refreshBasiqConnection(userId);
+
+      setRefreshConnectionApiCalled(true);
+    }
+
+    if (dateGroupedTransactions?.length) {
+      refreshConnectionFunc();
+    }
   }, [dateGroupedTransactions]);
+
+  useEffect(() => {
+    if (refreshConnectionApiCalled && !incomeExpenseApiCalled && completed) {
+      setIncomeExpenseData();
+    }
+  }, [completed, incomeExpenseApiCalled, refreshConnectionApiCalled]);
 
   function aggregateChangeHistoryAmountByMonth(changeHistory) {
     return Object.entries(
