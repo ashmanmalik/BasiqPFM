@@ -13,7 +13,6 @@ import { HomeSlider, Expenditures } from './Slider';
 import { AccountPage } from './Account';
 import { IncomeExpensePage } from './IncomeExpense';
 
-
 const homePageIndex = 1;
 const accountPageIndex = 2;
 const incomeExpensePageIndex = 3;
@@ -327,8 +326,8 @@ export function PersonalFinanceLayout() {
         </div>
         {/* MOBILE VIEW */}
         <div
-          className={`${selectedPageIndex && selectedPageIndex === homePageIndex ? 'mt-36 mb-24' : ''} ${
-            selectedPageIndex && selectedPageIndex === incomeExpensePageIndex ? 'mt-20 mb-24' : ''
+          className={`${selectedPageIndex && selectedPageIndex === homePageIndex ? 'mt-28 mb-24' : ''} ${
+            selectedPageIndex && selectedPageIndex === incomeExpensePageIndex ? 'mt-8 mb-24' : ''
           } sm:hidden h-full`}
         >
           {/* HOME PAGE */}
@@ -404,7 +403,7 @@ export function PersonalFinanceLayout() {
           )}
           {/* TRANSACTION PAGE */}
           {selectedPageIndex && selectedPageIndex === transactionPageIndex && (
-            <div className="mt-20 mb-20">
+            <div className="mt-8 mb-20">
               <TransactionPage
                 dateGroupedTransactions={dateGroupedTransactions?.slice(0, 20)}
                 inTransactionsPage={true}

@@ -1,12 +1,19 @@
+import { useState, useEffect } from 'react';
 import { formatCurrency } from '@/utils/formatCurrency';
 
 export function TransactionItem({ item }) {
+  const [randomInt, setRandomInt] = useState(0);
+
+  useEffect(() => {
+    setRandomInt(parseInt((Math.random() * 100) % 4));
+  });
+
   return (
     <div className="sm:bg-[#F5F7F8] bg-[#FEFEFE] sm:p-4">
       <div className="flex justify-between ml-6 mr-6">
         <div className="flex">
           <div>
-            <img className="w-9 h-9" src={`/merchant-${parseInt((Math.random() * 100) % 4)}.svg`} alt="Merchant" />
+            <img className="w-9 h-9" src={`/merchant-${randomInt}.svg`} alt="Merchant" />
           </div>
           <div className="ml-2 text-sm2 sm:text-sm3">
             <div className="font-medium">
