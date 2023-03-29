@@ -91,7 +91,7 @@ export function AccountPage() {
       {/* Show account list if not any account selected */}
       {!showDetail && (
         <>
-          <div className="flex justify-between mt-20 ml-6 mr-6 sm:mt-16">
+          <div className="flex justify-between mt-8 ml-6 mr-6 sm:mt-16 items-center">
             <div className="flex">
               <div className="hidden mr-4 sm:block">
                 <img className="hidden mr-3 w-7 h-7 sm:block" src="/wallet.svg" alt="My accounts" />

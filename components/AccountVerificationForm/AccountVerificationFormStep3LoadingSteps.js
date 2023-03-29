@@ -72,7 +72,7 @@ export function AccountVerificationFormStep3LoadingSteps() {
   }, [displayError]);
 
   return (
-    <div className="flex flex-col space-y-10 sm:space-y-12">
+    <div className="flex flex-col space-y-10 sm:space-y-12 min-w-[22rem]">
       <div className="flex flex-col items-center text-center space-y-8">
         <CircularProgressBar value={progressBarValue} error={displayError} />
         {error ? (

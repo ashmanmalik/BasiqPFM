@@ -70,7 +70,7 @@ export function AccountVerificationFormStep0SignUp() {
 
           {/* Terms and Conditions */}
           {/* PRODUCT-COPY: Depending on your product (if you're adding a real user account creation e.g.) */}
-          <div className="absolute bottom-16 sm:static">
+          <div className="absolute bottom-16 w-full sm:static">
             <p className="max-w-xs mx-auto mb-8 text-xs leading-relaxed text-center sm:text-white sm:!mt-20 sm:mb-4">
               By continuing you agree to the Terms and Conditions and our Privacy Policy.
             </p>
