@@ -1,7 +1,7 @@
-const { getBasiqAuthorizationHeader } = require('serverAuthentication');
+const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 export default async function DestroyBulkUsersandtheirLifes() {
-    
+
     fetch("https://au-api.basiq.io/users", {
          headers: { 
              'Authorization': await getBasiqAuthorizationHeader(), 
