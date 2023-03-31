@@ -27,7 +27,7 @@ export default async function DestroyBulkUsersandtheirLifes() {
                 fetch(`${user.links.self}`, {
                  method: 'DELETE',
                  headers: { 
-                     'Authorization': `Bearer ${token}`, 
+                     'Authorization': getBasiqAuthorizationHeader(), 
                      'Accept': 'application/json'
                    }
                  })
