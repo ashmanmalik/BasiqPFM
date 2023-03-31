@@ -1,8 +1,8 @@
-var token = process.env.SERVER_ACCESS;
-DestroyBulkUsersandtheirLifes(token);
+export default function DestroyBulkUsersandtheirLifes() {
 
-export default function DestroyBulkUsersandtheirLifes(token) {
-     fetch("https://au-api.basiq.io/users", {
+    var token = process.env.SERVER_ACCESS;
+
+    fetch("https://au-api.basiq.io/users", {
          headers: { 
              'Authorization': `Bearer ${token}`, 
              'Accept': 'application/json'
