@@ -1,10 +1,10 @@
-export default function DestroyBulkUsersandtheirLifes() {
+const { getBasiqAuthorizationHeader } = require('serverAuthentication');
 
-    var token = process.env.SERVER_ACCESS;
-
+export default async function DestroyBulkUsersandtheirLifes() {
+    
     fetch("https://au-api.basiq.io/users", {
          headers: { 
-             'Authorization': `Bearer ${token}`, 
+             'Authorization': await getBasiqAuthorizationHeader(), 
              'Accept': 'application/json'
            }
      })
