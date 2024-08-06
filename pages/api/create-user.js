@@ -1,5 +1,7 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateEmail } = require('../../utils/validation');
+
 
 /**
  * This API endpoint creates a user, which gives you a "bucket" to store all your financial data.
@@ -9,6 +11,14 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 const createUser = async (req, res) => {
   if (req.method === 'POST') {
+
+    const { email } = req.body;
+    // Validate the request body fields
+    if (!validateEmail(email)) {
+      res.status(400).json({ message: 'Invalid email' });
+      return;
+    }
+
     try {
       const { data } = await axios({
         method: 'post',
@@ -30,4 +40,4 @@ const createUser = async (req, res) => {
   }
 };
 
-export default createUser;
+module.exports = createUser;

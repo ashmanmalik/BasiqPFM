@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateUserId, validateAccountId } = require('../../utils/validation');
 
 /**
  * This API endpoint retrieves a specific account of a user.
@@ -9,9 +10,21 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 const getAccount = async (req, res) => {
   if (req.method === 'GET') {
-    try {
       const { userId, accountId } = req.query;
-      const { data } = await axios.get(`https://au-api.basiq.io/users/${userId}/accounts/${accountId}`, {
+      
+      // Validate the userId and accountId query parameters
+      if (!validateUserId(userId)) {
+        res.status(400).json({ message: 'Invalid userId' });
+        return;
+      }
+
+      if (!validateAccountId(accountId)) {
+        res.status(400).json({ message: 'Invalid accountId' });
+        return;
+      }
+
+      try {
+        const { data } = await axios.get(`https://au-api.basiq.io/users/${userId}/accounts/${accountId}`, {
         headers: {
           Authorization: await getBasiqAuthorizationHeader(),
           Accept: 'application/json',
@@ -28,4 +41,4 @@ const getAccount = async (req, res) => {
   }
 };
 
-export default getAccount;
+module.exports = getAccount;

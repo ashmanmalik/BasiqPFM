@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateUserId } = require('../../utils/validation');
 
 /**
  * This API endpoint retrieves a list of accounts. Each entry in the array is a separate account object.
@@ -8,7 +9,15 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
  */
 
 const accounts = async (req, res) => {
+  
   const { userId } = req.query;
+    
+  // Validate the userId query parameter
+  if (!validateUserId(userId)) {
+    res.status(400).json({ message: 'Invalid userId' });
+    return;
+  }
+  
   try {
     const { data } = await axios.get(`https://au-api.basiq.io/users/${userId}/accounts`, {
       headers: {
@@ -37,4 +46,4 @@ const accounts = async (req, res) => {
   }
 };
 
-export default accounts;
+module.exports = accounts;
