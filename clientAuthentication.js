@@ -1,5 +1,5 @@
 import { axios } from '@/utils/axios';
-import useLocalStorage from './store/hooks/useLocalStorage';
+
 /**
  * The Basiq API authentication process is fairly straight forward, we simply exchange our API key for a token which has an expiry of 60 minutes
  * Our token will be passed as the authorization header to requests made to the Basiq API, which you can find in `./utils/axios`
@@ -13,7 +13,6 @@ import useLocalStorage from './store/hooks/useLocalStorage';
 const REFRESH_INTERVAL = 1000 * 60 * 30; // 30 minutes
 const TOKEN_KEY = 'basiqApiClientAccessToken';
 const REFRESH_DATE_KEY = 'basiqApiClientAccessTokenRefreshDate';
-const l_storage = useLocalStorage();
 
 export const getBasiqAuthorizationHeader = async () => {
   const token = await getClientToken();
@@ -48,17 +47,17 @@ const getNewClientToken = async userId => {
 };
 
 export const getClientTokenFromLocalStorage = () => {
-  return l_storage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY);
 };
 
 export const setClientTokenInLocalStorage = token => {
-  l_storage.setItem(TOKEN_KEY, token);
+  localStorage.setItem(TOKEN_KEY, token);
 };
 
 export const getClientTokenRefreshDateFromLocalStorage = () => {
-  return l_storage.getItem(REFRESH_DATE_KEY);
+  return localStorage.getItem(REFRESH_DATE_KEY);
 };
 
 export const setClientTokenRefreshDateInLocalStorage = token => {
-  l_storage.setItem(REFRESH_DATE_KEY, token);
+  localStorage.setItem(REFRESH_DATE_KEY, token);
 };

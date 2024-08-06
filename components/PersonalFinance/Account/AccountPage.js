@@ -5,7 +5,6 @@ import { AccountItemDetail } from './AccountItemDetail';
 import { AccountType } from './AccountType';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 import { useAccountVerificationForm } from '@/components/AccountVerificationForm/AccountVerificationFormProvider';
-import useSessionStorage from '@/components/store/hooks/useSessionStorage';
 
 const accountTypes = [
   { type: 'savings', title: 'Savings accounts' },
@@ -18,7 +17,6 @@ export const AccountPage = () => {
   const [selectedAccount, setSelectedAccount] = useState({});
   const [accountsData, setAccountsData] = useState(new Map());
   const [institutionData, setInstitutionsData] = useState([]);
-  const s_storage = useSessionStorage()
 
   const { resetForNewAccount } = useAccountVerificationForm();
 
@@ -31,7 +29,7 @@ export const AccountPage = () => {
   const getData = () => {
     setLoading(true);
 
-    const userId = s_storage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
 
     //Get all accounts of user
     axios

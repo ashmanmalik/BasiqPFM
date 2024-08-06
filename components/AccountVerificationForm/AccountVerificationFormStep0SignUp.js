@@ -7,11 +7,10 @@ import { Button } from '@/components/Button';
 import { TextField } from '@/components/TextField';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { axios } from '@/utils/axios';
-import useSessionStorage from '@/components/store/hooks/useSessionStorage';
 
 export const AccountVerificationFormStep0SignUp = () => {
   const { goToStep, updateAccountVerificationFormState, goForward } = useAccountVerificationForm();
-  const s_storage = useSessionStorage();
+
   const [formState, { email }] = useFormState();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState();
@@ -20,9 +19,9 @@ export const AccountVerificationFormStep0SignUp = () => {
   useEffect(() => {
     // document.referrer will be null if directed to a page using http, so skip that check for development
     if (process.env.NODE_ENV !== 'production') {
-      s_storage.getItem('userId') ? goToStep(2) : null;
+      sessionStorage.getItem('userId') ? goToStep(2) : null;
     } else {
-      s_storage.getItem('userId') && document.referrer === 'https://consent.basiq.io/' ? goToStep(2) : null;
+      sessionStorage.getItem('userId') && document.referrer === 'https://consent.basiq.io/' ? goToStep(2) : null;
     }
   }, []);
 
@@ -34,8 +33,8 @@ export const AccountVerificationFormStep0SignUp = () => {
       .then(async res => {
         setSubmitting(false);
         updateAccountVerificationFormState({ user: res.data });
-        s_storage.setItem('userId', res.data.id);
-        s_storage.setItem('email', formState.values.email);
+        sessionStorage.setItem('userId', res.data.id);
+        sessionStorage.setItem('email', formState.values.email);
         goForward();
       })
       .catch(error => {

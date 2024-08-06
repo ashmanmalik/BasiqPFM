@@ -9,12 +9,11 @@ import { ErrorScene } from '@/components/ErrorScene';
 import { ErrorMessage } from '@/components/ErrorMessage';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { maskAccountNumber } from '@/utils/maskAccountNumber';
-import useSessionStorage from '@/components/store/hooks/useSessionStorage';
 
 export const AccountVerificationFormStep4SelectAccount = () => {
   const { goForward, updateAccountVerificationFormState, goToConsent, getUserConsent } = useAccountVerificationForm();
-  const s_storage = useSessionStorage();
-  const userId = s_storage.getItem('userId');
+
+  const userId = sessionStorage.getItem('userId');
 
   const [selectedAccount, setSelectedAccount] = useState();
   const [validationError, setValidationError] = useState(false);

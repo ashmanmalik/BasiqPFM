@@ -1,28 +1,31 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 import { AccountVerificationFormResumeInBackgroundModal } from './AccountVerificationFormResumeInBackgroundModal';
 import { useAccountVerificationForm } from './AccountVerificationFormProvider';
 import { useTernaryState } from '@/utils/useTernaryState';
+import { fetchUserTransactions, userTransactionsLoading } from '@/store/actions/userTransactionsActions';
 import { Button } from '@/components/Button';
 import { CircularProgressBar } from '@/components/CircularProgressBar';
-import { useTransactionsDataContext } from '@/components/store/context/transactionContext';
-import useSessionStorage from '@/components/store/hooks/useSessionStorage';
+
 export const AccountVerificationFormStep3LoadingSteps = () => {
   const [isResumeModalOpen, openResumeModal, closeResumeModal] = useTernaryState(false);
   const [progressBarValue, setProgressBarValue] = useState(0);
   const [progressInterval, setProgressInterval] = useState(null);
-  const transactionContext = useTransactionsDataContext();
-   const s_storage = useSessionStorage();
-  const {isCompleted, transactionsError } = transactionContext.state
+  const [transactionLoadingDispatched, setTransactionLoadingDispatched] = useState(false);
+
+  useDispatch(userTransactionsLoading());
+  const { isCompleted, transactionsError } = useSelector(state => state.userTransactions);
   const { basiqConnection, finish } = useAccountVerificationForm();
   const { error, progress, completed, stepNameInProgress, reset, setJobId } = basiqConnection;
 
   const { data } = useAccountsData({
-    userId: s_storage.getItem('userId'),
+    userId: sessionStorage.getItem('userId'),
   });
-  let userTransactionsRequestSuccessful = isCompleted;
 
-  let userTransactionsRequestError = transactionsError;
+  let userTransactionsRequestSuccessful = isCompleted && transactionLoadingDispatched;
+
+  let userTransactionsRequestError = transactionsError && transactionLoadingDispatched;
 
   const errorOrNoData = error || !data || data.length === 0;
 
@@ -118,18 +121,20 @@ const useAccountsData = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState();
   const [error, setError] = useState();
-  const s_storage = useSessionStorage();
-  const { updateAccountVerificationFormState } = useAccountVerificationForm();
-  const transactionContext = useTransactionsDataContext();
 
+  const { updateAccountVerificationFormState } = useAccountVerificationForm();
+
+  let dispatch = useDispatch();
   const fetchAccounts = useCallback(() => {
     axios
       .get('/api/accounts', { params: { userId } })
       .then(res => {
         let account = res.data.find(account => !account.disabled);
         updateAccountVerificationFormState({ account });
-        s_storage.setItem('currentAccountId', account.id);
-        transactionContext.getAllTransactions();
+        sessionStorage.setItem('currentAccountId', account.id);
+
+        dispatch(fetchUserTransactions(userId));
+
         setData(res.data);
         setError(undefined);
         setLoading(false);
