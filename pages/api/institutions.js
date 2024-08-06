@@ -38,4 +38,4 @@ const institutions = async (req, res) => {
   }
 };
 
-export default institutions;
+module.exports = institutions;

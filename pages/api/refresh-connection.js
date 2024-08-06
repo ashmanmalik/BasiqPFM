@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateUserId } = require('../../utils/validation');
 
 /**
  * This API endpoint refreshes all connections belonging to the specified user.
@@ -10,6 +11,13 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 const refreshConnection = async (req, res) => {
   if (req.method === 'POST') {
     const { userId } = req.query;
+
+    // Validate the userId query parameter
+    if (!validateUserId(userId)) {
+      res.status(400).json({ message: 'Invalid userId' });
+      return;
+    }
+
     try {
       const { data } = await axios({
         method: 'post',
@@ -30,4 +38,4 @@ const refreshConnection = async (req, res) => {
   }
 };
 
-export default refreshConnection;
+module.exports = refreshConnection;

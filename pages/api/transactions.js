@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { validateUserId, validateLimit } = require('../../utils/validation');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 /**
@@ -8,19 +9,16 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
  */
 
 const transactions = async (req, res) => {
+
   const { userId, limit } = req.query;
 
-  // Regular expressions for validation
-  const userIdRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-  const limitRegex = /^[0-9]+$/;
-
   // Validate the userId and limit query parameters
-  if (!userId.match(userIdRegex)) {
+  if (!validateUserId(userId)) {
     res.status(400).json({ message: 'Invalid userId' });
     return;
   }
 
-  if (!limit.match(limitRegex)) {
+  if (!validateLimit(limit)) {
     res.status(400).json({ message: 'Invalid limit' });
     return;
   }
@@ -39,4 +37,4 @@ const transactions = async (req, res) => {
   }
 };
 
-export default transactions;
+module.exports = transactions;

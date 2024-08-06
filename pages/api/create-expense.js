@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateUserId } = require('../../utils/validation');
 
 /**
  * This API endpoint creates a new expense summary for a user.
@@ -9,7 +10,15 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 const createExpense = async (req, res) => {
   if (req.method === 'POST') {
+    
     const { userId } = req.query;
+    
+    // Validate the userId query parameter
+    if (!validateUserId(userId)) {
+      res.status(400).json({ message: 'Invalid userId' });
+      return;
+    }
+
     try {
       const { data } = await axios({
         method: 'post',
@@ -31,4 +40,4 @@ const createExpense = async (req, res) => {
   }
 };
 
-export default createExpense;
+module.exports = createExpense;
