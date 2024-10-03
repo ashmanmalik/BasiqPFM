@@ -1,5 +1,7 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateUserId, validateSnapshotId } = require('../../utils/validation');
+
 
 /**
  * This API endpoint retrieves user income.
@@ -9,6 +11,18 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 const retrieveIncome = async (req, res) => {
   const { userId, snapshotId } = req.query;
+
+  // Validate the userId and snapshotId query parameters
+  if (!validateUserId(userId)) {
+    res.status(400).json({ message: 'Invalid userId' });
+    return;
+  }
+
+  if (!validateSnapshotId(snapshotId)) {
+    res.status(400).json({ message: 'Invalid snapshotId' });
+    return;
+  }
+
   try {
     const { data } = await axios.get(`https://au-api.basiq.io/users/${userId}/income/${snapshotId}`, {
       headers: {
@@ -23,4 +37,4 @@ const retrieveIncome = async (req, res) => {
   }
 };
 
-export default retrieveIncome;
+module.exports = retrieveIncome;

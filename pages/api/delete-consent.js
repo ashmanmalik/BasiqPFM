@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
+const { validateUserId, validateConsentId } = require('../../utils/validation');
 
 /**
  * This API endpoint deletes consent of a user.
@@ -9,8 +10,20 @@ const { getBasiqAuthorizationHeader } = require('../../serverAuthentication');
 
 const deleteConsent = async (req, res) => {
   if (req.method === 'DELETE') {
-    try {
+    
       const { userId, consentId } = req.query;
+      
+      // Validate the userId and consentId query parameters
+      if (!validateUserId(userId)) {
+        res.status(400).json({ message: 'Invalid userId' });
+        return;
+      }
+
+      if (!validateConsentId(consentId)) {
+        res.status(400).json({ message: 'Invalid consentId' });
+        return;
+      }
+  try {
       const { data } = await axios({
         method: 'delete',
         url: `https://au-api.basiq.io/users/${userId}/consents/${consentId}`,
@@ -30,4 +43,4 @@ const deleteConsent = async (req, res) => {
   }
 };
 
-export default deleteConsent;
+module.exports = deleteConsent;
