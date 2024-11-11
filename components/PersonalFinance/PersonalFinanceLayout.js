@@ -74,7 +74,7 @@ export const PersonalFinanceLayout = () => {
     //Before creating income & expense summary, creating or refreshing the relevant connections is required
     //Creating expense summary between 2020-01 - 2021-01
     axios
-      .post(`/api/create-expense?userId=${userId}`, { fromMonth: '2022-03', toMonth: '2023-02' })
+      .post(`/api/create-expense?userId=${userId}`, { fromMonth: '2023-11', toMonth: '2024-11' })
       .then(response => {
         const data = response.data;
         const paymentsTotal = data.payments.reduce((sum, p) => {
@@ -144,7 +144,7 @@ export const PersonalFinanceLayout = () => {
 
     //Creating income summary between 2020-01 - 2021-01
     axios
-      .post(`/api/create-income?userId=${userId}`, { fromMonth: '2022-03', toMonth: '2023-02' })
+      .post(`/api/create-income?userId=${userId}`, { fromMonth: '2023-11', toMonth: '2024-11' })
       .then(response => {
         const data = response.data;
 
