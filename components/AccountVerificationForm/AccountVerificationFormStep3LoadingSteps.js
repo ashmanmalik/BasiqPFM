@@ -43,11 +43,16 @@ export const AccountVerificationFormStep3LoadingSteps = () => {
     if (value > 100) value = 100;
     if (value === 100) setProgressBarValue(value);
   };
+  
 
   //this is to provide a more reactive interface for the users
   const incrementProgressBarValueGradually = () => {
     let interval = setInterval(() => {
-      setProgressBarValue(currentValue => currentValue + Math.floor(Math.random() * 4));
+      setProgressBarValue(currentValue => {
+        const remaining = 100 - currentValue;
+        const increment = Math.min(Math.floor(Math.random() * 4), remaining); // Ensure it doesn't exceed 100
+        return currentValue + increment;
+      });
     }, 250);
     setProgressInterval(interval);
   };

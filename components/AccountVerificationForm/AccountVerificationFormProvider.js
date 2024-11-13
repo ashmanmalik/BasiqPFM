@@ -4,6 +4,9 @@ import { useRouter } from 'next/router';
 import { getClientToken } from '../../clientAuthentication';
 import { FORM_COMPONENTS } from './AccountVerificationForm';
 import { axios } from '@/utils/axios';
+const POLL_INTERVAL = 2000; // Poll every 2 seconds (in milliseconds)
+const MAX_ATTEMPTS = 8; // Max polling attempts
+
 
 const AccountVerificationFormContext = createContext({
   // The current step number of the form the user on
@@ -237,62 +240,86 @@ const useBasiqConnection = ({ currentStep, userId }) => {
     }
   };
 
+
   const checkJobStatus = async () => {
     try {
       const response = await checkConnectionStatus({ jobId });
+  
       // A job contains multiple steps which can either be "pending" | "in-progress" | "success" | "failed"
-      // In this demo, we only care about the "verify-credentials" and "retrieve-accounts" steps
+      // In this demo, we only care about the "verify-credentials", "retrieve-accounts", and "retrieve-transactions" steps
       const filteredSteps = response.data.steps.filter(
         ({ title }) =>
           title === 'verify-credentials' || title === 'retrieve-accounts' || title === 'retrieve-transactions'
       );
-
-      // Check which step is in progress or if any steps have failed
+  
       let stepError;
+      let inProgressStep = null;
+  
+      // Check for any in-progress or failed steps
       for (const step of filteredSteps) {
         if (step.status === 'in-progress') {
-          setStepNameInProgress(step.title);
-          break;
+          inProgressStep = step.title; // Track the step in progress
         }
         if (step.status === 'failed') {
-          stepError = newStepError(step.result);
+          stepError = newStepError(step.result); // Handle failure
           break;
         }
       }
-
+  
       if (stepError) {
         setError(stepError);
         return;
       }
-
-      // Check if all steps have been completed
+  
+      // Update UI states based on the job status
       const completed = filteredSteps.every(step => step.status === 'success');
-
       setCompleted(completed);
       setInProgress(!completed);
-      if (completed) setEstimatedProgress(100);
+  
+      if (completed) {
+        setEstimatedProgress(100); // Job is complete
+      } else if (inProgressStep) {
+        setStepNameInProgress(inProgressStep); // Track which step is in progress
+      }
+  
     } catch (error) {
-      setError(error);
+      setError(error); // Handle errors from the API call
     }
   };
-
-  // If we have a basiq connection, check the status every 2 seconds
+  
+  // Poll the job status every 2 seconds, with a max attempt limit
   useEffect(() => {
     // We can't start a job without this information
     if (!jobId) return;
-    // If a job was started, but an error occurred or it's finished, we can stop polling
+  
+    // Initialize polling attempt counter
+    let attemptCount = 0;
+  
+    // If there's an error or the job is already completed, stop polling
     if (error || completed) return;
-
+  
     // Immediately check the status of the job
     checkJobStatus();
-
-    // Check the status of the job every 2 seconds
-    const timer = setInterval(checkJobStatus, 2000);
-
+  
+    // Set an interval to check the status every 2 seconds
+    const timer = setInterval(() => {
+      if (attemptCount >= MAX_ATTEMPTS) {
+        // If the job is still in-progress after 20 attempts, mark it as failed
+        setError(new Error("The connection is failed on credential stage. Please try again!"));
+        clearInterval(timer); // Stop polling
+        return;
+      }
+      attemptCount++; // Increment the attempt counter
+      checkJobStatus(); // Poll the status
+    }, POLL_INTERVAL);
+  
+    // Cleanup function to clear the interval when the component unmounts or when polling should stop
     return () => {
       clearInterval(timer);
     };
+  
   }, [completed, error, jobId, userId]);
+  
 
   // We want the job polling experience to be an engaging experience for the user, we here we are
   // using the estimated connection time to show a progress bar which will get updated every 500ms
