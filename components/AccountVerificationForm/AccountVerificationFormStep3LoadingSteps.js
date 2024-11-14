@@ -76,6 +76,13 @@ export const AccountVerificationFormStep3LoadingSteps = () => {
     if (displayError) setProgressBarValue(100);
   }, [displayError]);
 
+  const handleReset = () => {
+    // Reset the progress bar to 0 and start the increment process
+    setProgressBarValue(0); 
+    incrementProgressBarValueGradually();
+    reset();
+  };
+
   return (
     <div className="flex flex-col space-y-10 sm:space-y-12 min-w-[22rem]">
       <div className="flex flex-col items-center text-center space-y-8">
@@ -86,7 +93,7 @@ export const AccountVerificationFormStep3LoadingSteps = () => {
               <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{error?.name}</h2>
               <p className="text-sm sm:text-base text-neutral-muted-darker">{error?.message}</p>
             </div>
-            <Button block onClick={reset}>
+            <Button block onClick={handleReset}>
               Try again
             </Button>
           </div>
