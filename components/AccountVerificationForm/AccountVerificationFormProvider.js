@@ -305,7 +305,7 @@ const useBasiqConnection = ({ currentStep, userId }) => {
     const timer = setInterval(() => {
       if (attemptCount >= MAX_ATTEMPTS) {
         // If the job is still in-progress after 20 attempts, mark it as failed
-        setError(new Error("The connection is failed on credential stage. Please try again!"));
+        setError(new Error("The connection failed at the credential step. Please try again!"));
         clearInterval(timer); // Stop polling
         return;
       }
